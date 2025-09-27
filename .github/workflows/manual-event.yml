@@ -1,0 +1,30 @@
+name: Manual Trigger with Inputs
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Name of the person'
+        required: true
+        default: 'User'
+      greetings:
+        description: 'Greeting message'
+        required: true
+        default: 'Hello'
+      data:
+        description: 'Additional data'
+        required: false
+        default: 'No data provided'
+
+jobs:
+  greet-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print greeting message
+        run: |
+          echo "${{ github.event.inputs.greetings }}, ${{ github.event.inputs.name }}!"
+          echo "Here is your data: ${{ github.event.inputs.data }}"
