@@ -1,22 +1,45 @@
-name: Build and Upload Artifact
+name: Hello JSON Workflow
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  build:
+  greet:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      # Step 1: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build project
-        run: |
-          mkdir -p output
-          echo "Hello World" > output/hello.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      # Step 2: Run custom action with string
+      - name: Run custom action with string
+        id: greet_string
+        uses: ./.github/actions/hello-pooja
         with:
-          name: my-artifact          # name of artifact
-          path: output/              # folder or file to upload
+          who-to-greet: 'Mona the Octocat'
+
+      # Step 3: Show string output
+      - name: Show string output
+        run: |
+          echo "Greeting: ${{ steps.greet_string.outputs.greeting }}"
+
+      # Step 4: Run custom action with JSON
+      - name: Run custom action with JSON
+        id: greet_json
+        uses: ./.github/actions/hello-pooja
+        with:
+          who-to-greet: '{"name":"GitHub Student"}'
+
+      # Step 5: Show JSON output
+      - name: Show JSON output
+        run: |
+          echo "Greeting: ${{ steps.greet_json.outputs.greeting }}"
+
+      # Step 6: Upload workflow artifact using updated v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: greetings-artifact
+          path: |
+            output/
+          retention-days: 7
+          include-hidden-files: true
