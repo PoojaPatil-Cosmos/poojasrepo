@@ -1,0 +1,22 @@
+name: Simple Webhook Conditional
+
+on:
+  repository_dispatch:
+    types: [webhook]
+
+jobs:
+  run-based-on-env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print environment value
+        run: | 
+          echo "Environment is: ${{ github.event.client_payload.env }}"
+
+      - name: Only run for production
+        if: ${{ github.event.client_payload.env == 'production' }}
+        run: echo "🚀 Running production tasks..."
+
+      - name: Only run for development
+        if: ${{ github.event.client_payload.env == 'development' }}
+        run: echo "🧪 Running development tasks..."
