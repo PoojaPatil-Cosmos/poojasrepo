@@ -1,0 +1,22 @@
+name: Build and Upload Artifact
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build project
+        run: |
+          mkdir -p output
+          echo "Hello World" > output/hello.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact          # name of artifact
+          path: output/              # folder or file to upload
