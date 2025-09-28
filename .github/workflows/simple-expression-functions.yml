@@ -1,0 +1,53 @@
+name: Expressions & Functions Example
+
+on:
+  push:
+    branches:
+      - '**'  # Match all branches
+
+jobs:
+  expressions-demo:
+    runs-on: ubuntu-latest
+
+    env:
+      ENVIRONMENT: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Show branch name
+        run: | 
+            echo "Branch ref: ${{ github.ref }}"
+
+      - name: Check if pushing to main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "You pushed to main!"
+
+      - name: Check if branch starts with feature/
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        run: echo "This is a feature branch."
+
+      - name: Check if branch ends with -test
+        if: endsWith(github.ref, '-test')
+        run: echo "This is a test branch."
+
+      - name: Check if commit message contains 'fix'
+        if: contains(github.event.head_commit.message, 'fix')
+        run: echo "Commit includes a fix!"
+
+      - name: Print GitHub actor (who pushed)
+        run: |
+            echo "Actor: ${{ github.actor }}"
+
+      - name: Use env variable in expression
+        if: env.ENVIRONMENT == 'production'
+        run: echo "Running in production mode!"
+
+      - name: Set and use output from previous step
+        id: example_step
+        run: echo "value=hello-world" >> $GITHUB_OUTPUT
+
+      - name: Use output from previous step
+        run: | 
+            echo "Output value was: ${{ steps.example_step.outputs.value }}"
