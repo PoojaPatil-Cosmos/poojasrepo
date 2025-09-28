@@ -1,22 +1,27 @@
-name: Simple Webhook Conditional
+name: Push with Conditionals
 
 on:
-  repository_dispatch:
-    types: [webhook]
+  push:  # Trigger on push to any branch
 
 jobs:
-  run-based-on-env:
+  conditional-job:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print environment value
-        run: | 
-          echo "Environment is: ${{ github.event.client_payload.env }}"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Only run for production
-        if: ${{ github.event.client_payload.env == 'production' }}
-        run: echo "🚀 Running production tasks..."
+      - name: Always run this step
+        run: echo "🔁 This runs on every push."
 
-      - name: Only run for development
-        if: ${{ github.event.client_payload.env == 'development' }}
-        run: echo "🧪 Running development tasks..."
+      - name: Run only on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "🟢 Pushed to the main branch!"
+
+      - name: Run only on feature branches
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        run: echo "🌱 This is a feature branch."
+
+      - name: Run if commit message contains [deploy]
+        if: contains(github.event.head_commit.message, '[deploy]')
+        run: echo "🚀 Deployment keyword found in commit message!"
