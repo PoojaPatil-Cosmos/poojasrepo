@@ -1,0 +1,22 @@
+name: Webhook Event Example
+
+on:
+  repository_dispatch:
+    types: [webhook]
+
+jobs:
+  respond-to-dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Show event type
+        run: |
+          echo "Event type: ${{ github.event.action }}"
+
+      - name: Print client payload if exists
+        run: |
+          echo "Payload data:"
+          echo "${{ toJson(github.event.client_payload) }}"
