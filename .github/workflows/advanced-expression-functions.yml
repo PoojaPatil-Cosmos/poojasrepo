@@ -1,0 +1,35 @@
+name: Expressions and JSON Functions Demo
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  expression-functions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Join an array into a string
+        run: |
+          echo "Joined string: ${{ join(fromJson('["one", "two", "three"]'), ' - ') }}"
+
+      - name: Convert commit object to JSON
+        run: |
+          echo "Commit JSON: ${{ toJson(github.event.head_commit) }}"
+
+      - name: Extract values from JSON string using fromJson
+        env:
+          RAW_JSON: '{"app": "frontend", "version": "1.2.3"}'
+        run: |
+          echo "Version: ${{ fromJson(env.RAW_JSON).version }}"
+          echo "App name: ${{ fromJson(env.RAW_JSON).app }}"
+
+      - name: Join values from JSON array
+        env:
+          NAMES_JSON: '["Alice", "Bob", "Charlie"]'
+        run: |
+          echo "Contributors: ${{ join(fromJson(env.NAMES_JSON), ', ') }}"
